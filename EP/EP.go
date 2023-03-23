@@ -6,7 +6,7 @@ import (
 	"sync"
 	"os"
 	"math"
-	"time"
+	"time" //Package time provides functionality for measuring and displaying time.
 	"runtime"
 	"strconv"
 )
@@ -17,8 +17,9 @@ const(
 	t23 = (2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0)//2 ^23
 	t46 = t23 * t23
 )
+//M is the Log_2 of the number of complex pairs of uniform (0, 1) random numbers.
 
-const MK = 16
+const MK = 16 //MK is the Log_2 of the size of each batch of uniform random numbers. it does not affect the results.
 const NK = 1 << MK
 const NQ = 10
 const EPSILON = 1.0e-8
@@ -53,7 +54,12 @@ func Ep(M int){
 	verify = false
 	
 	np = NN
-	
+	/*
+	* call the random number generator functions and initialize
+	* the x-array to reduce the effects of paging on the timings.
+	* also, call all mathematical functions that are used. make
+	* sure these initializations cannot be eliminated as dead code.
+	*/
 	rand(0, &dum[0], dum[1], []float64{dum[2]})
 	dum[0] = randlc(&dum[1], dum[2])
 	for i := 0; i < NK_PLUS; i++{
@@ -70,7 +76,7 @@ func Ep(M int){
 
 	t1 = A
 	rand(0,&t1,A,x[:])
-	
+	/* compute AN = A ^ (2 * NK) (mod 2^46) */
 	for i := 0; i < MK+1; i++{
 		randlc(&t1,t1)
 	}
@@ -88,36 +94,39 @@ func Ep(M int){
 	var rr Results
 
 	// Channels sends and receives block until the other side is ready. 
-	// This allows goroutines to synchronize once all goroutines have completed their computation.
+	// The main thread can terminate even before executing our goroutine.
 	// Buffered channels accept a limited number of values without a corresponding receiver for those values.
 	result := make(chan Results,np) 
 
 	//To wait for multiple goroutines to finish, we can use a wait group. 
 	var wg sync.WaitGroup 
 
+	//Time package contains both a wall clock reading and a monotonic clock reading
+	//The general rule is that the wall clock is for telling time and the monotonic clock is for measuring time.
 	start := time.Now()
 
 	//Add np number to the WaitGroup counter. If the counter becomes zero, all goroutines blocked on Wait are released.
 	wg.Add(np)
 
+	// Each instance of this loop may be performed independently. We compute
+	// the k separately to take into account the fact that some nodes
+	// have more numbers to generate than others
 	for k := 1; k <= np; k++{
 		//Goroutine is like a thread where you can spawn a new goroutine to run code simultaneously using the go keyword:
-		//Our goroutine is independent and unknown to the main goroutine. Therefore, the main thread terminates even before executing our goroutine.
-		//we need to ask the main thread to wait for the goroutine
 		go func(k int){
-			//
+			//Each Done() function decreases the counter by 1.
 			defer wg.Done()
 			var SX, SY float64
 			var t1,t2,t3,t4,x1,x2 float64
 			var kk, ik, l int
-			var qq = [NQ]float64{}
+			var qq = [NQ]float64{} /* private copy of q[0:NQ-1] */
 			var x = [NK_PLUS]float64{}
 			var rrTemp Results
 			kk = (-1) + k
 			t1 = S
 			t2 = an
 			
-			for i:=0;i<NQ-1;i++{
+			for i:=0;i<NQ-1;i++{ //NQ - 1??
 				qq[i] = 0.0
 			}
 			SX = 0.0
@@ -135,7 +144,10 @@ func Ep(M int){
 				kk = ik
 			}
 			rand((2*NK), &t1, A, x[:])
-			
+
+			// compute gaussian deviates by acceptance-rejection method and
+			// tally counts in concentric square annuli. this loop is not
+			// vectorizable.
 			for i := 0; i< NK; i++{
 				x1 = 2.0 * x[2*i] - 1.0
 				x2 = 2.0 * x[2*i+1] - 1.0
@@ -169,6 +181,7 @@ func Ep(M int){
 	t = stop.Sub(start)
 	//A sender can close a channel to indicate that no more values will be sent. 
 	close(result)
+	//The Wait() function blocks the code and it will be released until the counter is zero.
 	wg.Wait()
 	
 	for i := 0; i < NQ-1; i ++{
@@ -261,7 +274,10 @@ func Ep(M int){
 
 	defer f.Close()
 }
-
+// This routine returns a uniform pseudorandom double precision number in the
+// range (0, 1) by using the linear congruential generator
+// x_{k+1} = a x_k  (mod 2^46) where 0 < x_k < 2^46 and 0 < a < 2^46. 
+// RANDLC = 2^(-46) * x_1
 func randlc(x *float64, a float64) float64 {
 	
 	var t1,t2,t3,t4,a1,a2,x1,x2,z float64
@@ -285,7 +301,7 @@ func randlc(x *float64, a float64) float64 {
 
 func rand(n int, x_speed *float64, a float64, y []float64){
 
-	var x,t1,t2,t3,t4,a1,a2,x1,x2,z float64
+	var x,t1	,t2,t3,t4,a1,a2,x1,x2,z float64
 
 	t1 = r23 * a
 	a1 = float64(int(t1))

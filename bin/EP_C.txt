@@ -1,9 +1,12 @@
-Benchmark :EP
+NAS Parallel Benchmark Parallel GO version
+Number of random numbers generated: 8.589934592e+09
+
+Benchmark EP Results:
+CPU Time = 3m44.977706937s
 N = 32
 No. Gaussian Pairs = 3.373275903e+09
-Sums = 47643.67927994332  -80840.72988043891
+Sums = 47643.679279943426  -80840.72988043955
 Counts: 
-chegou aqui
 0 - 1.572172634e+09
 1 - 1.501108549e+09
 2 - 2.81805648e+08
@@ -13,15 +16,9 @@ chegou aqui
 6 - 13
 7 - 0
 8 - 0
-Benchmark Completed!
-chegou aqui
 Class NPB = C
 Total threads = 8
-Iterations = 0
-chegou aqui
-Time = 4m43.9945178s
-Mop/s total = 30.246832433749187
-Operation type =  Random Numbers Generated
-chegou aqui
-Verification = teste
-Compiler Version = go1.13.8
+Mop/s total = 38.18127008648648
+Operation type = EP - Generation of Random Numbers
+Verification = SUCCESSFUL
+Compiler Version = go1.18
