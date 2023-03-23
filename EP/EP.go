@@ -85,14 +85,23 @@ func Ep(M int){
 	}
 	
 	var rr Results
-	result := make(chan Results,np)
-	
-	var wg sync.WaitGroup
+
+	// Channels sends and receives block until the other side is ready. 
+	// This allows goroutines to synchronize once all goroutines have completed their computation.
+	result := make(chan Results,np) 
+
+	//To wait for multiple goroutines to finish, we can use a wait group. 
+	var wg sync.WaitGroup 
 
 	start := time.Now()
+
+	//Add np number to the WaitGroup counter. If the counter becomes zero, all goroutines blocked on Wait are released.
 	wg.Add(np)
 
 	for k := 1; k <= np; k++{
+		//Goroutine is like a thread where you can spawn a new goroutine to run code simultaneously using the go keyword:
+		//Our goroutine is independent and unknown to the main goroutine. Therefore, the main thread terminates even before executing our goroutine.
+		//we need to ask the main thread to wait for the goroutine
 		go func(k int){
 			defer wg.Done()
 			var SX, SY float64
