@@ -12,9 +12,9 @@ import (
 )
 
 const(
-	r23 = (0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5)
+	r23 = (0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5*0.5)//0,5 ^23
 	r46 = r23 * r23
-	t23 = (2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0)
+	t23 = (2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0*2.0)//2 ^23
 	t46 = t23 * t23
 )
 
@@ -27,14 +27,15 @@ const S = 271828183.0
 const NK_PLUS = ((2*NK)+1)
 
 type Results struct{
+	//float64 is a version of float that stores decimal values using a total of 64-bits of data.
 	qqR [NQ]float64
 	sxx float64
 	syy float64
 }
 
 func Ep(M int){
-	var MM = M - MK
-	var NN = 1 << MM	
+	var MM = M - MK 
+	var NN = 1 << MM //1 * 2 ^(MM)
 	
 	var x = [NK_PLUS]float64{}
 	var q = [NQ]float64{}
@@ -88,6 +89,7 @@ func Ep(M int){
 
 	// Channels sends and receives block until the other side is ready. 
 	// This allows goroutines to synchronize once all goroutines have completed their computation.
+	// Buffered channels accept a limited number of values without a corresponding receiver for those values.
 	result := make(chan Results,np) 
 
 	//To wait for multiple goroutines to finish, we can use a wait group. 
@@ -103,6 +105,7 @@ func Ep(M int){
 		//Our goroutine is independent and unknown to the main goroutine. Therefore, the main thread terminates even before executing our goroutine.
 		//we need to ask the main thread to wait for the goroutine
 		go func(k int){
+			//
 			defer wg.Done()
 			var SX, SY float64
 			var t1,t2,t3,t4,x1,x2 float64
@@ -164,6 +167,7 @@ func Ep(M int){
 
 	stop := time.Now()
 	t = stop.Sub(start)
+	//A sender can close a channel to indicate that no more values will be sent. 
 	close(result)
 	wg.Wait()
 	
