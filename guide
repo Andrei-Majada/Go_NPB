@@ -1,0 +1,8 @@
+echo ''
+echo '   To make a NAS benchmark type '
+echo ''
+echo '         make <benchmark-name> CLASS=<class>'
+echo ''
+echo '   where <benchmark-name> is "ep"'
+echo '         <class>          is "S", "W", "A", "B", "C", "D", "E"'
+echo ''
