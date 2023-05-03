@@ -188,6 +188,7 @@ func IS(M int){
 
 	sort.Ints(key_array)
 
+	// bucketSort(key_array, 2)
 	passed_verification = 0
 
 	full_verify(0)
@@ -206,7 +207,7 @@ func IS(M int){
 
 func create_seq(seed float64, a float64, id int, numWorkers int, wg *sync.WaitGroup) {
 	(*wg).Done()
-
+	// var wg sync.WaitGroup 
 	var (
 		x, s float64
 		i, j, k int
@@ -231,11 +232,18 @@ func create_seq(seed float64, a float64, id int, numWorkers int, wg *sync.WaitGr
 		an)
 
 	k = MAX_KEY / 4
-
+	// wg.Add(k2)
+	
 	for i = k1; i < k2; i++ {
+		// go func(k1 int){
+
 		x = Randlc(&s, an)
+
 		x += Randlc(&s, an)
+
 		x += Randlc(&s, an)
+		fmt.Println("Resultado rand", x)
+
 		x += Randlc(&s, an)
 		key_array[j] = int(float64(k) * x)
 
@@ -259,7 +267,7 @@ func find_my_seed(kn, np int, nn int64, s, a float64) float64 {
 	}
 
 	mq = int64(math.Ceil(float64(nn/4+int64(np)-1) / float64(np)))
-	nq = mq * 4 * int64(kn) // number of rans to be skipped
+	nq = mq * 4 * int64(kn)
 
 	t1 = s
 	t2 = a
@@ -277,6 +285,37 @@ func find_my_seed(kn, np int, nn int64, s, a float64) float64 {
 
 	t1 = Randlc(&t1, t2)
 	return t1
+}
+
+func bucketSort(array []int, bucketSize int) []int {
+	var max, min int
+	for _, n := range array {
+		if n < min {
+			min = n
+		}
+		if n > max {
+			max = n
+		}
+	}
+	nBuckets := (max-min)/bucketSize + 1
+	buckets := make([][]int, nBuckets)
+	for i := 0; i < nBuckets; i++ {
+		buckets[i] = make([]int, 0)
+	}
+
+	for _, n := range array {
+		idx := (n-min) / bucketSize
+		buckets[idx] = append(buckets[idx], n)
+	}
+
+	sorted := make([]int, 0)
+	for _, bucket := range buckets {
+		if len(bucket) > 0 {
+			sorted = append(sorted, bucket...)
+		}
+	}
+
+	return sorted
 }
 
 func full_verify(numWorkers int) {
