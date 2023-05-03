@@ -2,7 +2,6 @@ CLASS=U
 
 config:
 	@cd ../config; ${MAKE} all
-	../config/definition EP ${CLASS}
+	../config/definition IS ${CLASS}
 
-EP:  default
-EP: default
+IS: default

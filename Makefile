@@ -8,6 +8,10 @@ EP: ep
 ep: header
 	cd EP; make CLASS=$(CLASS)
 
+IS: is
+is: header
+	cd IS; make CLASS=$(CLASS)
+	
 init: 
 	go mod init NPB-GO
 
