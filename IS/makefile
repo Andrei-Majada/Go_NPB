@@ -1,10 +1,22 @@
 SHELL=/bin/sh
+CLASS=S
 
-include ../config/make.common
+default: header
+	@ $(SHELL) guide
 
-IS.o:	IS.go
-	go build -o IS IS.go
+IS: is
+is: header
+	cd IS; make CLASS=$(CLASS)
+	
+init: 
+	go mod init NPB-GO
 
-clean:		
-	go clean
-	rm -f *.o *~
+clean:
+	rm -f core
+	rm -f config/definition
+
+header:
+	@ $(SHELL) start
+
+help:
+	@ $(SHELL) guide

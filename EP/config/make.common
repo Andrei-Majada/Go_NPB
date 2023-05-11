@@ -1,0 +1,7 @@
+CLASS=U
+
+config:
+	@cd ../config; ${MAKE} all
+	../config/definition EP ${CLASS}
+
+EP: default

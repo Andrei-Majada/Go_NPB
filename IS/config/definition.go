@@ -1,7 +1,6 @@
 package main
 
 import(
-	// ep "NPB-GO/EP"
 	is "NPB-GO/IS"
 	"fmt"
 	"os"
@@ -17,8 +16,6 @@ func verify(args[] string, typeB *int, classp *string){
 			os.Exit(1)
 		}
 	}
-	// if (args[1] == "EP" || args[1] == "ep") {
-	//    *typeB = 6
 	if (args[1] == "IS" || args[1] == "is") {
 		*typeB = 5
 	}else{
@@ -60,5 +57,4 @@ func main(){
 	}
 
 	is.IS(m)
-	// ep.Ep(m)
 }
