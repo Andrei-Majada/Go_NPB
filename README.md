@@ -20,18 +20,43 @@ E o projeto está disponível em um repositório publico no [GitHub].
 
 O projeto requer que tenha [Go] instalado na máquina, de preferência na versão  go 1.18.
 
+Os dois kernels estão em diferentes diretórios, um chamado EP e o outro IS.
+
+Caso queira utilizar o EP, basta acessar a pasta do EP:
+```sh
+cd EP
+```
+
 Para limpar builds anteriores:
 ```sh
 make clean
 ```
 
-Para executar uma versão:
+Para executar a versão do EP:
 ```sh
-make <benchmark-name> CLASS=<class>
+make EP CLASS=<class>
 ```
-Onde o <benchmark-name> pode ser "ep" ou "is". 
 
-E a <class> pode ser "S", "W", "A", "B", "C", "D", "E"
+Onde a <class> pode ser "S", "W", "A", "B", "C", "D", "E"
+ 
+
+Caso queira utilizar o IS, basta acessar a pasta do IS:
+ 
+```sh
+cd IS
+```
+
+Para limpar builds anteriores:
+```sh
+make clean
+```
+
+Para executar a versão do IS:
+```sh
+make IS CLASS=<class>
+```
+
+Onde a <class> pode ser "S", "W", "A", "B", "C", "D", "E"
 
 
 
